@@ -1,0 +1,15 @@
+PLL_Phase_Part=zeros(1,num_symbol+1);
+PLL_Freq_Part=zeros(1,num_symbol+1);
+loop_error_In = zeros(1,num_symbol+1);
+loop_error_Out = zeros(1,num_symbol+1);
+Ko = 1;
+Kd = 1;
+K = Ko*Kd;
+sigma = 0.707;
+symbol_rate = looprb;              % 进锁相环时的点速率
+coefficient_temp = 0.015;
+BL = coefficient_temp*symbol_rate;              % 参数根据测试结果需要改动
+Wn= 8*sigma*BL/(1+4*sigma^2);
+T_nco = 1/symbol_rate;                          % T_nco应该是采样周期
+C11 = (2*sigma*Wn*T_nco)/(K);
+C22 = ((T_nco*Wn)^2)/(K);
