@@ -38,12 +38,12 @@ s_PCM_BPSK_PM = cos(2 * pi * fc * t + Kp * s_BPSK);
 s_PCM_BPSK_PM1 = sin(2 * pi * fc * t + Kp * s_BPSK);
 
 send_signal = s_PCM_BPSK_PM + 1i * s_PCM_BPSK_PM1;
-demodulation_signal = send_signal;
+
 % figure;plot(fftshift(abs(fft(send_signal,65536))./max(abs(fft(send_signal,65536)))))
 %% 信道
 % 加噪
 send_signal = awgn(send_signal, SNR, 'measured');
-
+demodulation_signal = send_signal;
 %% 参数估计
 % 主载频估计
 nfft = 16384*4;
@@ -298,5 +298,5 @@ Q_PLL_D1=qk(1:end);
 % figure;plot(w(1:end-1));title("经过环路滤波器得到的定时控制字w，符号数");
 % figure;plot(time_error);title("定时误差估计值，符号数");
 %% 绘制星座图
-starmap = (I_PLL_D1+1i*Q_PLL_D1).*exp(-1i*0.25*pi);
+starmap = (I_PLL_D1+1i*Q_PLL_D1).*exp(1i*0.25*pi);
 figure;scatter(real(starmap(100:end)),imag(starmap(100:end)));title("码元同步输出星座图");
