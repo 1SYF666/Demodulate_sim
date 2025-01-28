@@ -11,13 +11,28 @@
 clear; clc;
 close all;
 %% 读文件
-str = 'D:\MODIFI_CODE\协议信号研究\A1\DDC_F225MHz_T2022-07-17_17-13-50-972_00400000sps_CH2.std';
+% str = 'D:\MODIFI_CODE\协议信号研究\A1\DDC_F225MHz_T2022-07-17_17-13-50-972_00400000sps_CH2.std';    % 2025-01-27
+str = 'D:\MODIFI_CODE\协议信号研究\A1\DDC_F225MHz_T2022-07-17_17-14-17-972_00400000sps_CH2.std';    % 2025-01-28
+
 fileID = fopen(str,'r');
 data = fread(fileID,'int16');
 fclose(fileID);
 data = data.';
 s = zeros(1,2*length(data));
 s = data(1:2:end-1) + 1i * data(2:2:end);
+
+%% 截取信号部分
+if 1
+    % 第一部分
+    % signalfirstsegmentaion = s(400000:449142);   % 长度参考cooledit pro软件设置
+    % signalfirstsegmentaion = s(4151116:4184266);   % 2025-01-28
+else
+    % 第二部分
+    % signalfirstsegmentaion = s(510000:584435);  % 2025-01-27
+    signalfirstsegmentaion = s(4276617:4328711);  % 2025-01-28
+end
+%
+signalfirstsegmentaion = signalfirstsegmentaion./max(abs(signalfirstsegmentaion));
 
 %% 参数设置
 fs = 400e3;
@@ -33,17 +48,6 @@ if 0
     xlabel('Time (s)');
     ylabel('Frequency (Hz)');
 end
-
-%% 截取信号部分
-if 0
-    % 第一部分
-    signalfirstsegmentaion = s(400000:449142);   % 长度参考cooledit pro软件设置
-else
-    % 第二部分
-    signalfirstsegmentaion = s(510000:584435);
-end
-%
-signalfirstsegmentaion = signalfirstsegmentaion./max(abs(signalfirstsegmentaion));
 
 %% 信号分析部分
 
