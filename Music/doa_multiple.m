@@ -25,43 +25,26 @@ c = 3*10^8;% 光速
 
 %% BPSK信号生成
 % PCM编码
-pcm_bits = randi([0 1],1,symbolnum);
+pcm_bits = randi([0 1],nums,symbolnum);
 pcm_symbols = 2 * pcm_bits - 1;   % 将0 --> -1; 1 --> 1
+
 % BPSK 调制
 sps = fs / Rb;                    % 每符号采样数
-rcos_pcm_s1 = repmat(pcm_symbols,sps,1);
-rcos_pcm_s1(2:sps,:) = 0;
-rcos_pcm_s = rcos_pcm_s1(:)';
 rolloff_factor = 0.7;       % 滚降因子
 rcos_fir = rcosdesign(rolloff_factor,2*sps,sps); % 默认是根升余弦滤波器,'sqrt'
-rcos_ds_real = filter(rcos_fir,1,rcos_pcm_s);
-
-pcm_bits = randi([0 1],1,symbolnum);
-pcm_symbols = 2 * pcm_bits - 1;   % 将0 --> -1; 1 --> 1
-rcos_pcm_s1 = repmat(pcm_symbols,sps,1);
-rcos_pcm_s1(2:sps,:) = 0;
-rcos_pcm_s = rcos_pcm_s1(:)';
-rcos_ds_real2 = filter(rcos_fir,1,rcos_pcm_s);
-
-pcm_bits = randi([0 1],1,symbolnum);
-pcm_symbols = 2 * pcm_bits - 1;   % 将0 --> -1; 1 --> 1
-rcos_pcm_s1 = repmat(pcm_symbols,sps,1);
-rcos_pcm_s1(2:sps,:) = 0;
-rcos_pcm_s = rcos_pcm_s1(:)';
-rcos_ds_real3 = filter(rcos_fir,1,rcos_pcm_s);
-
-pcm_bits = randi([0 1],1,symbolnum);
-pcm_symbols = 2 * pcm_bits - 1;   % 将0 --> -1; 1 --> 1
-rcos_pcm_s1 = repmat(pcm_symbols,sps,1);
-rcos_pcm_s1(2:sps,:) = 0;
-rcos_pcm_s = rcos_pcm_s1(:)';
-rcos_ds_real4 = filter(rcos_fir,1,rcos_pcm_s);
+for i = 1:nums
+    pcm_symbols_temp = pcm_symbols(i,:);
+    rcos_pcm_s1 = repmat(pcm_symbols_temp,sps,1);
+    rcos_pcm_s1(2:sps,:) = 0;
+    rcos_pcm_s = rcos_pcm_s1(:)';
+    rcos_ds_real(i,:) = filter(rcos_fir,1,rcos_pcm_s);
+end
 
 %% 多源信号模型
 % S_coefficience = ones(nums,1);
 % S1 = rcos_ds_real;
 % S_multiple = S_coefficience*S1;
-S_multiple = [rcos_ds_real;rcos_ds_real2;rcos_ds_real3;rcos_ds_real4];
+S_multiple = rcos_ds_real;
 fa = exp(-j*2*pi.*fc*d.*sin(theta)/c);
 exponent = linspace(0,numy-1,numy)';
 A = fa.^exponent;
